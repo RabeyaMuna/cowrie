@@ -160,6 +160,14 @@ reportOptionalMemberAccess = "none"
 reportOptionalOperand = "information"
 reportPossiblyUnboundVariable = "information"
 reportUnsupportedDunderAll = "information"
+reportUnknownMemberType = "none"
+reportUnknownArgumentType = "none"
+reportUnknownVariableType = "none"
+reportUnknownParameterType = "none"
+reportUnknownLambdaType = "none"
+reportMissingParameterType = "none"
+reportMissingTypeArgument = "none"
+reportMissingTypeStubs = "none"
 
 [tool.pytype]
 inputs = ["src"]
