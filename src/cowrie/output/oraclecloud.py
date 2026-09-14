@@ -1,9 +1,13 @@
+# pyright: reportUnknownMemberType=none
+# pyright: reportUnknownVariableType=none
+
 from __future__ import annotations
 
 import datetime
 import json
 import secrets
 import string
+from typing import Any
 
 import oci
 
@@ -18,12 +22,16 @@ class Output(cowrie.core.output.Output):
     Oracle Cloud output
     """
 
-    def generate_random_log_id(self):
+    log_ocid: str
+    hostname: str
+    loggingingestion_client: Any
+
+    def generate_random_log_id(self) -> str:
         charset = string.ascii_letters + string.digits
         random_log_id = "".join(secrets.choice(charset) for _ in range(32))
         return f"cowrielog-{random_log_id}"
 
-    def sendLogs(self, event):
+    def sendLogs(self, event: Any) -> None:
         log_id = self.generate_random_log_id()
         # Initialize service client with default config file
         current_time = datetime.datetime.now(datetime.timezone.utc).replace(tzinfo=None)
@@ -64,7 +72,7 @@ class Output(cowrie.core.output.Output):
             log.err(f"Oracle Cloud plugin Error: {ex}")
             raise
 
-    def start(self):
+    def start(self) -> None:
         """
         Initialize Oracle Cloud LoggingClient with user or instance principal authentication
         """
@@ -103,10 +111,10 @@ class Output(cowrie.core.output.Output):
             )
             raise ValueError()
 
-    def stop(self):
+    def stop(self) -> None:
         pass
 
-    def write(self, event):
+    def write(self, event: Any) -> None:
         """
         Push to Oracle Cloud put_logs
         """

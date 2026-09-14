@@ -18,6 +18,9 @@ BLOCKED_IPS = [
     "224.0.0.0/4",  # Multicast addresses
     "240.0.0.0/4",  # Reserved addresses
     "255.255.255.255",  # Limited broadcast address
+    # IPv6 blocked addresses
+    "::1/128",  # IPv6 loopback address (equivalent to 127.0.0.1)
+    "::/128",  # IPv6 unspecified address (equivalent to 0.0.0.0)
 ]
 
 
