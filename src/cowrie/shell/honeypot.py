@@ -16,7 +16,6 @@ from twisted.python.compat import iterbytes
 
 from cowrie.core.config import CowrieConfig
 from cowrie.shell import fs
-from cowrie.shell import protocol
 
 
 class HoneyPotShell:

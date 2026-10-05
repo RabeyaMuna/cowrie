@@ -21,7 +21,6 @@ from twisted.python import failure, log
 
 import cowrie.commands
 from cowrie.core.config import CowrieConfig
-from cowrie.shell import command, honeypot
 
 
 class HoneyPotBaseProtocol(insults.TerminalProtocol, TimeoutMixin):
@@ -30,12 +29,17 @@ class HoneyPotBaseProtocol(insults.TerminalProtocol, TimeoutMixin):
     """
 
     commands: ClassVar[dict] = {}
-    for c in cowrie.commands.__all__:
-        try:
-            module = import_module(f"cowrie.commands.{c}")
-            commands.update(module.commands)
-        except ImportError as e:
-            exc_type, exc_value, exc_traceback = sys.exc_info()
+
+    @classmethod
+    def _load_commands(cls) -> None:
+        if cls.commands:
+            return
+        for c in cowrie.commands.__all__:
+            try:
+                module = import_module(f"cowrie.commands.{c}")
+                cls.commands.update(module.commands)
+            except ImportError as e:
+                exc_type, exc_value, exc_traceback = sys.exc_info()
             log.err(
                 "Failed to import command {}: {}: {}".format(
                     c,
@@ -47,6 +51,7 @@ class HoneyPotBaseProtocol(insults.TerminalProtocol, TimeoutMixin):
             )
 
     def __init__(self, avatar):
+        self._load_commands()
         self.user = avatar
         self.environ = avatar.environ
         self.hostname: str = self.user.server.hostname
@@ -251,6 +256,7 @@ class HoneyPotExecProtocol(HoneyPotBaseProtocol):
 
 class HoneyPotInteractiveProtocol(HoneyPotBaseProtocol, recvline.HistoricRecvLine):
     def __init__(self, avatar):
+        self._load_commands()
         recvline.HistoricRecvLine.__init__(self)
         HoneyPotBaseProtocol.__init__(self, avatar)
 
@@ -382,6 +388,7 @@ class HoneyPotInteractiveTelnetProtocol(HoneyPotInteractiveProtocol):
     """
 
     def __init__(self, avatar):
+        self._load_commands()
         HoneyPotInteractiveProtocol.__init__(self, avatar)
 
     def getProtoTransport(self):
